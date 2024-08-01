@@ -1,0 +1,39 @@
+services:
+  ollama:
+    image: ollama/ollama
+    runtime: nvidia
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - .:/app/ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app/open_webui
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    
+  chatgpt-artifacts:
+    image: docker.io/library/chatgpt-artifacts:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app/chatgpt-artifacts
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  ollama:
+  open-webui:
+  chatgpt-artifacts:
