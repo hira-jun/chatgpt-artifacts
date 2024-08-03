@@ -16,8 +16,12 @@ export default async (req, res) => {
   try {
     const { prompt, conversationId } = await req.json()
 
+    // const openai = new OpenAI({
+    //   apiKey: process.env.OPENAI_API_KEY
+    // })
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: 'ollama',
+      baseURL: 'http://host.docker.internal:11434/v1'
     })
 
     if (!conversations[conversationId]) {
@@ -28,9 +32,15 @@ export default async (req, res) => {
 
     conversations[conversationId].push({ role: 'user', content: prompt })
 
+    // const stream = await openai.chat.completions.create({
+    //   stream: true,
+    //   model: 'gpt-4o',
+    //   messages: conversations[conversationId]
+    // })
+
     const stream = await openai.chat.completions.create({
       stream: true,
-      model: 'gpt-4o',
+      model: 'llama3.1:8B',
       messages: conversations[conversationId]
     })
 
